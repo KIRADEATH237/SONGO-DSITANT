@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SONGO — Charles</title>
+  <link rel="stylesheet" href="songo.css">
+  <style>
+    /* ===== ÉCRAN DE SALON ===== */
+    #ecran-salon {
+      position: fixed;
+      inset: 0;
+      background: #1a0f00;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      gap: 18px;
+    }
+    #ecran-salon h2 {
+      color: #f5deb3;
+      font-size: 1.7rem;
+      letter-spacing: 3px;
+      margin-bottom: 6px;
+    }
+    .salon-separateur {
+      color: #c8a97a;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      margin: 4px 0;
+    }
+    .salon-input {
+      padding: 10px 18px;
+      font-size: 1.3rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      background: #2a1800;
+      color: #f5deb3;
+      border: 2px solid #c8955a;
+      border-radius: 8px;
+      width: 200px;
+      text-align: center;
+    }
+    .btn-salon {
+      padding: 12px 36px;
+      font-size: 1rem;
+      cursor: pointer;
+      background: linear-gradient(135deg, #8B5E3C, #5a3010);
+      color: #f5deb3;
+      border: 2px solid #c8955a;
+      border-radius: 8px;
+      letter-spacing: 2px;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-salon:hover { background: linear-gradient(135deg, #a0704a, #6B3F1F); transform: scale(1.05); }
+    #msg-salon {
+      color: #ff9966;
+      font-size: 0.9rem;
+      min-height: 20px;
+      text-align: center;
+    }
+    #code-affiche {
+      font-size: 2.2rem;
+      letter-spacing: 8px;
+      color: #ffcc88;
+      font-weight: bold;
+      background: rgba(0,0,0,0.5);
+      padding: 10px 24px;
+      border-radius: 10px;
+      border: 2px dashed #c8955a;
+    }
+
+    /* ===== BADGE CODE EN JEU ===== */
+    #badge-code {
+      position: fixed;
+      top: 12px;
+      right: 14px;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid #c8955a;
+      border-radius: 8px;
+      padding: 5px 12px;
+      color: #ffcc88;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      z-index: 500;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- BADGE CODE -->
+<div id="badge-code">🎮 <span id="badge-code-val"></span></div>
+
+<!-- ÉCRAN DE SALON -->
+<div id="ecran-salon">
+  <h2>⚫ SÔNGO</h2>
+
+  <!-- Créer une partie -->
+  <button class="btn-salon" onclick="creerPartie()">Créer une partie</button>
+
+  <div class="salon-separateur">— ou —</div>
+
+  <!-- Rejoindre une partie existante -->
+  <input class="salon-input" id="input-code" type="text" maxlength="6" placeholder="CODE" />
+  <button class="btn-salon" onclick="rejoindrePartie()">Rejoindre</button>
+
+  <div id="msg-salon"></div>
+
+  <!-- Affiché après création, pour partager le code -->
+  <div id="bloc-code-partage" style="display:none; flex-direction:column; align-items:center; gap:10px;">
+    <div style="color:#c8a97a; font-size:0.85rem; letter-spacing:1px;">Partagez ce code à votre adversaire :</div>
+    <div id="code-affiche">——</div>
+    <div style="display:flex; gap:12px;">
+      <button class="btn-salon" onclick="choisirRole(0)">Jouer en SUD</button>
+      <button class="btn-salon" onclick="choisirRole(1)">Jouer en NORD</button>
+    </div>
+  </div>
+</div>
+
+<!-- JEU -->
+<div class="container">
+  <h1>SONGO — Charles</h1>
+  <div class="scores">
+    <div class="boite-joueur">
+      <span id="label-nord" style="color:#ffcc88;font-weight:bold;">Joueur Nord</span>
+      <span class="label">Capturés</span>
+      <span id="score1" class="score-val">0</span>
+      <span class="label">En jeu</span>
+      <span id="restantNORD" class="restant-val">35</span>
+    </div>
+    <div id="message">Chargement...</div>
+    <div class="boite-joueur">
+      <span id="label-sud" style="color:#ffcc88;font-weight:bold;">Joueur Sud</span>
+      <span class="label">Capturés</span>
+      <span id="score0" class="score-val">0</span>
+      <span class="label">En jeu</span>
+      <span id="restantSUD" class="restant-val">35</span>
+    </div>
+  </div>
+  <div class="plateau-wrapper">
+    <span class="label-joueur">Nord</span>
+    <div class="plateau">
+      <div class="rangee" id="range-nord">
+        <div class="case" id="case7"  onclick="jouer(7)">5</div>
+        <div class="case" id="case8"  onclick="jouer(8)">5</div>
+        <div class="case" id="case9"  onclick="jouer(9)">5</div>
+        <div class="case" id="case10" onclick="jouer(10)">5</div>
+        <div class="case" id="case11" onclick="jouer(11)">5</div>
+        <div class="case" id="case12" onclick="jouer(12)">5</div>
+        <div class="case" id="case13" onclick="jouer(13)">5</div>
+      </div>
+      <div class="rangee" id="rangee-sud">
+        <div class="case" id="case0" onclick="jouer(0)">5</div>
+        <div class="case" id="case1" onclick="jouer(1)">5</div>
+        <div class="case" id="case2" onclick="jouer(2)">5</div>
+        <div class="case" id="case3" onclick="jouer(3)">5</div>
+        <div class="case" id="case4" onclick="jouer(4)">5</div>
+        <div class="case" id="case5" onclick="jouer(5)">5</div>
+        <div class="case" id="case6" onclick="jouer(6)">5</div>
+      </div>
+    </div>
+    <span class="label-joueur">Sud</span>
+  </div>
+  <button id="nouvelle-partie-btn" onclick="réinitialiserPartie()">Nouvelle partie</button>
+</div>
+
+<script src="songo.js"></script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+/* ==========================================================================
+   DESIGN GLOBAL ET CONFIGURATION DE BASE
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1a0f00;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+h1 {
+    color: #f5deb3;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* ==========================================================================
+   ZONE DES SCORES ET MESSAGES
+   ========================================================================== */
+.scores {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 10px;
+    gap: 20px;
+}
+
+.boite-joueur {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #5a3010;
+    border-radius: 12px;
+    padding: 12px 20px;
+    gap: 4px;
+    min-width: 120px;
+}
+
+.label {
+    color: #c8a97a;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.score-val {
+    color: #ffcc88;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+.restant-val {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+#message {
+    color: #ffcc88;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+}
+
+/* ==========================================================================
+   LE PLATEAU DE JEU (SÔNGO TRADITIONNEL)
+   ========================================================================== */
+.plateau-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+.label-joueur {
+    color: #c8a97a;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+.plateau {
+    background:
+        repeating-linear-gradient(90deg,
+            rgba(0, 0, 0, 0.03) 0px,
+            rgba(0, 0, 0, 0.03) 1px,
+            transparent 1px,
+            transparent 18px),
+        repeating-linear-gradient(180deg,
+            rgba(255, 255, 255, 0.02) 0px,
+            rgba(255, 255, 255, 0.02) 1px,
+            transparent 1px,
+            transparent 12px),
+        linear-gradient(160deg, #c8955a 0%, #a0703a 30%, #8a5e2e 60%, #b07840 100%);
+    border-radius: 18px;
+    padding: 35px 45px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.7),
+        inset 0 1px 3px rgba(255, 220, 150, 0.2),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.3);
+    border: 5px solid #6b3f1a;
+    outline: 2px solid #c8955a;
+}
+
+.rangee {
+    display: flex;
+    gap: 22px;
+}
+
+/* ==========================================================================
+   LES CASES (LES TROUS) ET LES PIONS (GRAINES)
+   ========================================================================== */
+.case {
+    width: 105px;
+    height: 105px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #2e1a0e 0%, #1a0a04 60%, #0d0502 100%);
+    box-shadow:
+        inset 0 6px 16px rgba(0, 0, 0, 0.9),
+        inset 0 2px 6px rgba(0, 0, 0, 0.8),
+        0 2px 4px rgba(180, 120, 60, 0.3);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 12px;
+    position: relative;
+    cursor: default;
+    transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.pion {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #555, #111 60%, #000);
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.8),
+        inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+/* ÉTAT CLIQUABLE DU JOUEUR ACTIF */
+.case.clickable {
+    cursor: pointer;
+    box-shadow:
+        inset 0 6px 16px rgba(0, 0, 0, 0.9),
+        0 0 14px rgba(255, 180, 0, 0.5),
+        0 2px 4px rgba(180, 120, 60, 0.3);
+}
+
+.case.clickable:hover {
+    transform: scale(1.07);
+    box-shadow:
+        inset 0 6px 16px rgba(0, 0, 0, 0.9),
+        0 0 22px rgba(255, 180, 0, 0.85),
+        0 2px 4px rgba(180, 120, 60, 0.3);
+}
+
+.case.mon-tour {
+    box-shadow: 0 0 15px rgba(255, 204, 136, 0.4);
+    border-color: #ffcc88;
+}
+
+/* CIBLES LUMINEUSES POUR LA DISTRIBUTION */
+.cible-lumineuse {
+    box-shadow:
+        inset 0 6px 16px rgba(0, 0, 0, 0.9),
+        0 0 25px rgba(0, 255, 150, 0.9),
+        0 2px 4px rgba(0, 255, 150, 0.5) !important;
+    border: 2px solid rgba(0, 255, 150, 0.8) !important;
+    transition: box-shadow 0.3s, border 0.3s;
+}
+
+.case-selectionnee {
+    box-shadow:
+        inset 0 8px 18px rgba(255, 255, 120, 0.7),
+        0 0 18px rgba(255, 240, 120, 0.7);
+    border: 2px solid #fff3a0;
+}
+
+.distribution {
+    box-shadow:
+        inset 0 8px 18px rgba(80, 220, 150, 0.45),
+        0 0 18px rgba(80, 220, 150, 0.45);
+    border: 2px solid rgba(80, 220, 150, 0.8);
+}
+
+/* ==========================================================================
+   LES BOUTONS
+   ========================================================================== */
+button {
+    margin-top: 5px;
+    padding: 12px 40px;
+    background: linear-gradient(135deg, #8B5E3C, #5a3010);
+    color: #f5deb3;
+    border: 2px solid #c8955a;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #a0704a, #6B3F1F);
+    transform: scale(1.05);
+}
+
+/* ==========================================================================
+   ZONE RESPONSIVE - OPTIMISATION AFFICHAGE MOBILE (ÉCRANS < 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .container {
+        gap: 10px;
+        padding: 5px;
+    }
+
+    h1 {
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .scores {
+        gap: 5px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .boite-joueur {
+        min-width: 100px;
+        padding: 6px 8px;
+        gap: 2px;
+    }
+
+    .score-val {
+        font-size: 1.1rem;
+    }
+
+    .restant-val {
+        font-size: 1rem;
+    }
+
+    .label {
+        font-size: 0.65rem;
+    }
+
+    #message {
+        font-size: 0.85rem;
+        max-width: 110px;
+        word-wrap: break-word;
+    }
+
+    .plateau-wrapper {
+        width: 100%;
+        padding: 0;
+    }
+
+    .plateau {
+        padding: 12px 10px;
+        gap: 15px;
+        border-width: 3px;
+        width: 100%;
+    }
+
+    .rangee {
+        gap: 4px;
+        justify-content: center;
+    }
+
+    .case {
+        width: 40px;
+        /* Réduction optimale pour l'alignement des 7 cases */
+        height: 40px;
+        padding: 3px;
+        gap: 2px;
+    }
+
+    .pion {
+        width: 6px;
+        /* Taille ajustée pour éviter les débordements */
+        height: 6px;
+    }
+
+    button {
+        padding: 8px 20px;
+        font-size: 0.85rem;
+    }
+}
